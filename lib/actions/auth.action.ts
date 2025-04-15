@@ -94,7 +94,7 @@ export async function signIn(params: SignInParams) {
 }
 
 export async function getCurrentUser(): Promise<User | null> {
-    const cookiesStore = cookies();
+    const cookiesStore = await cookies();
     const sessionCookie = cookiesStore.get("session")?.value;
 
     if(!sessionCookie) return null;
