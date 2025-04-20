@@ -13,7 +13,8 @@ const InterviewCard = async({
     role,
     type,
     techstack,
-    createdAt
+    createdAt,
+    questions
 }: InterviewCardProps) => {
     const feedback = userId && id  ? await getFeedbackByInterviewId({
         interviewId:id,
@@ -63,15 +64,19 @@ const InterviewCard = async({
             <div className='flex flex-row justify-between'>
                 <DisplayTechIcons techStack={techstack} />
 
-                <Button className='btn-primary' >
-                    <Link href={feedback ? 
-                        `/interview/${id}/feedback`:
-                        `/interview/${id}`
-                    }>
-                        {feedback ? "Check Feedback" : "View Interview"}
-                    </Link>
+                <div className="flex gap-2 items-center">
+                    <p className='text-sm' >{questions?.length} Questions</p>
+                    <Button className='btn-primary' >
+                        <Link href={feedback ? 
+                            `/interview/${id}/feedback`:
+                            `/interview/${id}`
+                        }>
+                            {feedback ? "Check Feedback" : "View Interview"}
+                        </Link>
 
-                </Button>
+                    </Button>
+                </div>
+
             </div>
         </div>
     </div>
