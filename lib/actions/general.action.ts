@@ -128,7 +128,9 @@ export async function getFeedbackByInterviewId(params: GetFeedbackByInterviewIdP
         .limit(1)
         .get();
 
+        console.log(interviewId, userId,feedback.docs);
         if(feedback.empty) return null;
+
 
         const feedbackDoc = feedback.docs[0];
         
@@ -137,7 +139,7 @@ export async function getFeedbackByInterviewId(params: GetFeedbackByInterviewIdP
             id: feedbackDoc.id,
             ...feedbackDoc.data()
         } as Feedback;
-        
+
     } catch (error) {
         console.error(error);
         return null;

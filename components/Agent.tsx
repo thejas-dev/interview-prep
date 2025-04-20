@@ -26,6 +26,8 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
     const [isSpeaking,setIsSpeaking] = useState(false);
     const [callStatus,setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
     const [messages,setMessages] = useState<SavedMessage[]>([]);
+    const [generatingFeedback, setGeneratingFeedback] = useState(false);
+    const [vapiLoading, setVapiLoading] = useState(false);
     
     useEffect(()=>{
         const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
@@ -70,6 +72,7 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
     const handleGenerateFeedback = async(messages: SavedMessage[]) => {
         console.log("Generate feedback here");
         console.log(messages);
+        setGeneratingFeedback(true);
 
         // TODO: create a server action that generates feedback
         const { success, feedbackId: id } = await createFeedback({
@@ -79,8 +82,10 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
         });
 
         if(success && id){
+            setGeneratingFeedback(false);
             router.push(`/interview/${interviewId}/feedback`);
         }else{
+            setGeneratingFeedback(false);
             console.log("Error saving feedback");
             router.push('/');
         }
@@ -100,12 +105,14 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
         setCallStatus(CallStatus.CONNECTING);
 
         if(type === 'generate'){
+            setVapiLoading(true);
             await vapi.start(process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
                 variableValues: {
                     username: userName,
                     userid: userId
                 }
             });
+            setVapiLoading(false);
         } else {
             let formattedQuestions = "";
             if(questions){
@@ -114,11 +121,15 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
                 .join('\n');
             }
 
+            setVapiLoading(true);
+
             await vapi.start(interviewer,{
                 variableValues: {
                     questions: formattedQuestions
                 }
             })
+
+            setVapiLoading(false);
         }
     }
 
@@ -175,11 +186,14 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
 
     <div className="w-full justify-center flex">
         {callStatus != CallStatus.ACTIVE ? (
-            <button className='relative btn-call' onClick={handleCall}>
+            <button disabled={generatingFeedback || vapiLoading} className={`relative btn-call ${generatingFeedback && "bg-blue-800 animate-pulse"}`}
+            onClick={handleCall}>
                 <span className={cn('absolute animate-ping rounded-full opacity-75', 
                     callStatus != CallStatus.CONNECTING && 'hidden')} />                
                 <span>
                     {
+                        generatingFeedback ?
+                        'Generating Feedback' :
                         isCallInactiveOrFinished ?
                         'Start' : '. . .'
                     }
@@ -187,7 +201,8 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
                 </span>
             </button>
         ) : (
-            <button className='btn-disconnect' onClick={handleDisconnect}>
+            <button disabled={generatingFeedback || vapiLoading} className='btn-disconnect' 
+            onClick={handleDisconnect}>
                 End
             </button>
         )}

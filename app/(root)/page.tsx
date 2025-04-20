@@ -24,7 +24,7 @@ import React from 'react'
         <div className='flex flex-col gap-6 max-w-lg'>
             <h2>Get Interview-Ready with AI-Powered Practice & Feedback</h2>
             <p className='text-lg' >
-              practice on real interview questions & get feedback
+              Practice on real interview questions & get feedback
             </p>
             <Button asChild className='btn-primary max-sm:w-full'>
               <Link href="/interview">Start an Interview</Link>
@@ -46,7 +46,7 @@ import React from 'react'
           {
             hasPastInterviews ? 
               userInterviews?.map((interview,j)=>(
-                <InterviewCard key={j} {...interview} />
+                <InterviewCard key={j} {...interview} userId={user?.id}/>
               )
             ) : (
               <p>
@@ -64,7 +64,7 @@ import React from 'react'
           {
             hasUpcomingInterviews ? 
               latestInterviews?.map((interview,j)=>(
-                <InterviewCard key={j} {...interview} />
+                <InterviewCard key={j} {...interview} userId={user?.id} />
               )
             ) : (
               <p>There are no interviews available</p>
