@@ -59,24 +59,22 @@ const InterviewCard = async({
                     "You haven't taken the interview yet. Take it now to improve your skills."
                     }
                 </p>
+                <p className='mt-2' >{questions?.length} Questions</p>
+
             </div>
 
             <div className='flex flex-row justify-between'>
                 <DisplayTechIcons techStack={techstack} />
 
-                <div className="flex gap-2 items-center">
-                    <p className='text-sm' >{questions?.length} Questions</p>
-                    <Button className='btn-primary' >
-                        <Link href={feedback ? 
-                            `/interview/${id}/feedback`:
-                            `/interview/${id}`
-                        }>
-                            {feedback ? "Check Feedback" : "View Interview"}
-                        </Link>
+                <Button className='btn-primary' >
+                    <Link href={feedback ? 
+                        `/interview/${id}/feedback`:
+                        `/interview/${id}`
+                    }>
+                        {feedback ? "Check Feedback" : "View Interview"}
+                    </Link>
 
-                    </Button>
-                </div>
-
+                </Button>
             </div>
         </div>
     </div>
